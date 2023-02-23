@@ -3,7 +3,6 @@
 
 int main() {
     BigInt num1, num2, sum, diff, mul, div;
-
     printf("Enter the first Integer:");
     getLongInt(&num1);
     printf("Enter the first Integer:");
