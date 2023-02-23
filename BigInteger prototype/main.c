@@ -2,13 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <stdbool.h>
-#include "myLongInt.h"
+#include "functions.h"
 
-void getLongInt(myLongInt *number) {
+void getLongInt(BigInt *number) {
     char *str = NULL;
     int n = 0, len = 0;
-    myLongInt *num = (myLongInt*)malloc(sizeof(myLongInt));
+    BigInt *num = (BigInt*)malloc(sizeof(BigInt));
     num->arr = (int *)malloc(sizeof(int));
     num->length = 0;
 
@@ -46,7 +45,7 @@ void getLongInt(myLongInt *number) {
             temp2[1] = '\0';
             int digit = atoi(temp2); // char to int
             num->arr = (int*)realloc(num->arr, (num->length + 1) * sizeof(int));
-            num = (myLongInt *)realloc(num, sizeof(int) + sizeof(num->arr));
+            num = (BigInt*)realloc(num, sizeof(int) + sizeof(num->arr));
             num->arr[num->length] = digit;
             ++i;
             ++num->length;
@@ -56,13 +55,13 @@ void getLongInt(myLongInt *number) {
     free(num);
 }
 
-void printMyLongInt(myLongInt num) {
+void printMyLongInt(BigInt num) {
     for (int i = 0; i < num.length; i++)
         printf("%d", num.arr[i]);
     printf("\n");
 }
 
-myLongInt addLongInt(myLongInt num1, myLongInt num2) {
+BigInt addLongInt(BigInt num1, BigInt num2) {
     // make copy's of the original num1.arr and num2.arr
     int num1Copy[num1.length], num2Copy[num2.length];
     memcpy(num1Copy, num1.arr, num1.length * sizeof(int));
@@ -75,7 +74,7 @@ myLongInt addLongInt(myLongInt num1, myLongInt num2) {
     int maxLen = (len1 > len2) ? len1 : len2;
     bool signCheck = false;
 
-    myLongInt sum;
+    BigInt sum;
     sum.arr = (int *)calloc(maxLen + 1, sizeof(int));
     sum.length = maxLen;
 
@@ -135,7 +134,7 @@ myLongInt addLongInt(myLongInt num1, myLongInt num2) {
     return sum;
 }
 
-myLongInt subLongInt(myLongInt content, myLongInt sub) {
+BigInt subLongInt(BigInt content, BigInt sub) {
     // Make copy's of the original content.arr and sub.arr
     int contentCopy[content.length], subCopy[sub.length];
     memcpy(contentCopy, content.arr, content.length * sizeof(int));
@@ -146,7 +145,7 @@ myLongInt subLongInt(myLongInt content, myLongInt sub) {
     int sign2 = (sub.arr[0] >= 0) ? 1 : -1;
     int maxLen = (len1 > len2) ? len1 : len2;
 
-    myLongInt diff;
+    BigInt diff;
     diff.arr = (int *)calloc(maxLen + 1, sizeof(int));
     diff.length = maxLen;
 
@@ -186,8 +185,8 @@ myLongInt subLongInt(myLongInt content, myLongInt sub) {
     return diff;
 }
 
-myLongInt subPositiveLongInts(myLongInt larger, myLongInt smaller, int maxLen) {
-    myLongInt diff;
+BigInt subPositiveLongInts(BigInt larger, BigInt smaller, int maxLen) {
+    BigInt diff;
     diff.arr = (int *)calloc(maxLen + 1, sizeof(int));
     diff.length = maxLen;
 
@@ -230,7 +229,7 @@ myLongInt subPositiveLongInts(myLongInt larger, myLongInt smaller, int maxLen) {
     return diff;
 }
 
-bool getAnswerSign(myLongInt content, myLongInt sub, int maxLen) {
+bool getAnswerSign(BigInt content, BigInt sub, int maxLen) {
     if (content.length > sub.length)
         return true;
     else if (content.length < sub.length)
@@ -251,14 +250,14 @@ bool getAnswerSign(myLongInt content, myLongInt sub, int maxLen) {
     }
 }
 
-myLongInt mulLongInt(myLongInt num1, myLongInt num2) {
+BigInt mulLongInt(BigInt num1, BigInt num2) {
     int sign1 = (num1.arr[0] >= 0) ? 1 : -1;
     int sign2 = (num2.arr[0] >= 0) ? 1 : -1;
     int sign = sign1 * sign2;
     num1.arr[0] *= sign1;
     num2.arr[0] *= sign2;
 
-    myLongInt result;
+    BigInt result;
     result.arr = (int*)calloc(num1.length + num2.length, sizeof(int));
     result.length = num1.length + num2.length;
 
@@ -296,14 +295,14 @@ myLongInt mulLongInt(myLongInt num1, myLongInt num2) {
     return result;
 }
 
-myLongInt divLongInt(myLongInt dividend, myLongInt divisor) {
+BigInt divLongInt(BigInt dividend, BigInt divisor) {
     int sign1 = (dividend.arr[0] >= 0) ? 1 : -1;
     int sign2 = (divisor.arr[0] >= 0) ? 1 : -1;
     int sign = sign1 * sign2;
     dividend.arr[0] *= sign1;
     divisor.arr[0] *= sign2;
 
-    myLongInt quotient, remainder;
+    BigInt quotient, remainder;
     quotient.arr = (int*)calloc(dividend.length, sizeof(int));
     remainder.arr = (int*)calloc(dividend.length, sizeof(int));
     quotient.length = 0;
@@ -345,10 +344,10 @@ myLongInt divLongInt(myLongInt dividend, myLongInt divisor) {
     return quotient;
 }
 
-int compareLongInts(myLongInt num1, myLongInt num2) {
+int compareLongInts(BigInt num1, BigInt num2) {
     // Make copies of num1 and num2 to avoid modifying the original numbers
-    myLongInt copy1 = num1;
-    myLongInt copy2 = num2;
+    BigInt copy1 = num1;
+    BigInt copy2 = num2;
 
     // Check signs
     if (copy1.arr[0] < 0 && copy2.arr[0] >= 0)
@@ -376,12 +375,12 @@ int compareLongInts(myLongInt num1, myLongInt num2) {
     return 0; // Numbers are equal
 }
 
-bool isEmpty(myLongInt num) {
+bool isEmpty(BigInt num) {
     if(num.length == 0)
         return true;
     return false;
 }
 
-myLongInt clone(myLongInt num) {
+BigInt clone(BigInt num) {
     return num;
 }
