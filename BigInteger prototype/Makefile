@@ -1,6 +1,6 @@
 CC = gcc
-FILES = main.c
-OUT_EXE = main
+FILES = test.c main.c
+OUT_EXE = test
 
 all: $(FILES)
 	$(CC) -o $(OUT_EXE) $(FILES)
