@@ -1,10 +1,9 @@
 #include <stdio.h>
-#include "myLongInt.h"
+#include "functions.h"
 
-int main()
-{
-    myLongInt num1, num2;
-    myLongInt sum, diff, mul, div;
+int main() {
+    BigInt num1, num2;
+    BigInt sum, diff, mul, div;
 
     printf("Give 2 Integers of whatever length:\n");
 
