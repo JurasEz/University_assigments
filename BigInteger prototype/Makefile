@@ -1,5 +1,5 @@
 CC = gcc
-FILES = test.c myLongInt.c
+FILES = test.c main.c
 OUT_EXE = test
 
 all: $(FILES)
