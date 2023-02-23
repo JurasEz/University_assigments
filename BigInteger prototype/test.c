@@ -2,8 +2,7 @@
 #include "functions.h"
 
 int main() {
-    BigInt num1, num2;
-    BigInt sum, diff, mul, div;
+    BigInt num1, num2, sum, diff, mul, div;
 
     printf("Enter the first Integer:");
     getLongInt(&num1);
