@@ -153,7 +153,7 @@ BigInt subBigInt(BigInt content, BigInt sub) {
     diff.length = maxLen;
 
     if (sign1 == 1 && sign2 == 1) {
-        bool isContentLarger = getAnswerSign(content, sub, maxLen);
+        bool isContentLarger = compareSign(content, sub, maxLen);
         if (isContentLarger) // if positive
             diff = subPositiveBigInts(content, sub, maxLen);
         else { // if negative
@@ -173,7 +173,7 @@ BigInt subBigInt(BigInt content, BigInt sub) {
         sub.arr[0] *= -1;   // +sub
         content.arr[0] *= -1;   // +content
 
-        bool isContentLarger = getAnswerSign(content, sub, maxLen);
+        bool isContentLarger = compareSign(content, sub, maxLen);
         if (isContentLarger) {  // if negative
             diff = subPositiveBigInts(content, sub, maxLen);
             diff.arr[0] *= -1;
@@ -232,7 +232,7 @@ BigInt subPositiveBigInts(BigInt larger, BigInt smaller, int maxLen) {
     return diff;
 }
 
-bool getAnswerSign(BigInt content, BigInt sub, int maxLen) {
+bool compareSign(BigInt content, BigInt sub, int maxLen) {
     if (content.length > sub.length)
         return true;
     else if (content.length < sub.length)
