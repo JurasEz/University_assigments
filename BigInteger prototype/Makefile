@@ -1,7 +1,12 @@
 CC = gcc
-FILES = test.c main.c
-OUT_EXE = test
+CFLAGS = -std=c99
+SRCS = test.c main.c
+OBJS = $(SRCS:.c=.o)
 
-all: $(FILES)
-	$(CC) -o $(OUT_EXE) $(FILES)
-	./$(OUT_EXE)
+all: test
+
+test: $(OBJS)
+	$(CC) $(CFLAGS) -o test $(OBJS)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
