@@ -1,5 +1,10 @@
+Description:
+
 This program takes two big integers, that are too long to get stored as long int and saves them as a custom data structure BigInt using a dynamic array. It allows to add, subtract, multiply and divide the big integers.
 
+
+
+Functions:
 
 void getBigInt(BigInt *number)
 Scans big integer from user input and saves it as a dynamic array
