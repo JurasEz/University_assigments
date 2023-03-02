@@ -4,29 +4,32 @@
 #include <ctype.h>
 #include "functions.h"
 
-void getLongInt(BigInt *number) {
+void getBigInt(BigInt *number) {
+    // Initialise base values
     char *str = NULL;
-    int n = 0, len = 0;
+    int n = 0, length = 0; // n for updates
     BigInt *num = (BigInt*)malloc(sizeof(BigInt));
     num->arr = (int *)malloc(sizeof(int));
     num->length = 0;
 
+    // We read while we still read the "text"/number
     while (scanf("%ms", &str) == 1) { // %ms - when the input size is unknown
         n = (int)strlen(str);
-        len = n;
-        str = (char*)realloc(str, len + 1);
-        if (scanf("%[^\n]%n", str + len, &n) != 1)
+        length = n;
+        str = (char*)realloc(str, length + 1);
+        if (scanf("%[^\n]%n", str + length, &n) != 1) // %n - non specific format
             break;
-        len += n;
-        str = (char *)realloc(str, len + 1);
+        length += n;
+        str = (char*)realloc(str, length + 1);
     }
 
+    // Checks if the input is valid
     if (isdigit(str[0]) || isdigit(str[1])) {
         int i = 0;
         if (str[0] == '0') {
             num->arr[num->length] = 0;
             num->length++;
-            i = len;
+            i = length;
         }
         else if ((str[0] == '-' && str[1] == '0')) {
             num->arr[num->length] = 0;
@@ -55,13 +58,13 @@ void getLongInt(BigInt *number) {
     free(num);
 }
 
-void printMyLongInt(BigInt num) {
+void printMyBigInt(BigInt num) {
     for (int i = 0; i < num.length; i++)
         printf("%d", num.arr[i]);
     printf("\n");
 }
 
-BigInt addLongInt(BigInt num1, BigInt num2) {
+BigInt addBigInt(BigInt num1, BigInt num2) {
     // make copy's of the original num1.arr and num2.arr
     int num1Copy[num1.length], num2Copy[num2.length];
     memcpy(num1Copy, num1.arr, num1.length * sizeof(int));
@@ -121,11 +124,11 @@ BigInt addLongInt(BigInt num1, BigInt num2) {
     }
     else if (sign1 == 1 && sign2 == -1) {
         num2.arr[0] *= -1;
-        sum = subLongInt(num1, num2);
+        sum = subBigInt(num1, num2);
     }
     else {
         num1.arr[0] *= -1;
-        sum = subLongInt(num1, num2);
+        sum = subBigInt(num1, num2);
     }
 
     // Restore the original array from the copies made at the start of the function
@@ -134,7 +137,7 @@ BigInt addLongInt(BigInt num1, BigInt num2) {
     return sum;
 }
 
-BigInt subLongInt(BigInt content, BigInt sub) {
+BigInt subBigInt(BigInt content, BigInt sub) {
     // Make copy's of the original content.arr and sub.arr
     int contentCopy[content.length], subCopy[sub.length];
     memcpy(contentCopy, content.arr, content.length * sizeof(int));
@@ -152,19 +155,19 @@ BigInt subLongInt(BigInt content, BigInt sub) {
     if (sign1 == 1 && sign2 == 1) {
         bool isContentLarger = getAnswerSign(content, sub, maxLen);
         if (isContentLarger) // if positive
-            diff = subPositiveLongInts(content, sub, maxLen);
+            diff = subPositiveBigInts(content, sub, maxLen);
         else { // if negative
-            diff = subPositiveLongInts(sub, content, maxLen);
+            diff = subPositiveBigInts(sub, content, maxLen);
             diff.arr[0] *= -1; // turn back to positive
         }
     }
     else if (sign1 == 1 && sign2 == -1) {   // +content -sub
         sub.arr[0] *= -1;   // +sub
-        diff = addLongInt(content, sub);
+        diff = addBigInt(content, sub);
     }
     else if (sign1 == -1 && sign2 == 1) {   // -content +sub
         sub.arr[0] *= -1;   // -sub
-        diff = addLongInt(content, sub);
+        diff = addBigInt(content, sub);
     }
     else {  // -content -sub
         sub.arr[0] *= -1;   // +sub
@@ -172,11 +175,11 @@ BigInt subLongInt(BigInt content, BigInt sub) {
 
         bool isContentLarger = getAnswerSign(content, sub, maxLen);
         if (isContentLarger) {  // if negative
-            diff = subPositiveLongInts(content, sub, maxLen);
+            diff = subPositiveBigInts(content, sub, maxLen);
             diff.arr[0] *= -1;
         }
         else    // if positive
-            diff = subPositiveLongInts(sub, content, maxLen);
+            diff = subPositiveBigInts(sub, content, maxLen);
     }
 
     // Restore the original content.arr and sub.arr from the copies made at the start of the function
@@ -185,7 +188,7 @@ BigInt subLongInt(BigInt content, BigInt sub) {
     return diff;
 }
 
-BigInt subPositiveLongInts(BigInt larger, BigInt smaller, int maxLen) {
+BigInt subPositiveBigInts(BigInt larger, BigInt smaller, int maxLen) {
     BigInt diff;
     diff.arr = (int *)calloc(maxLen + 1, sizeof(int));
     diff.length = maxLen;
@@ -210,21 +213,21 @@ BigInt subPositiveLongInts(BigInt larger, BigInt smaller, int maxLen) {
         }
     }
 
-    // Remove leading zeroes if there are any and reallocate the array
-    int zeroes = 0;
-    while (diff.arr[zeroes] == 0) {
-        if (zeroes == diff.length)
+    // Remove leading zero if there are any and reallocate the array
+    int zero = 0;
+    while (diff.arr[zero] == 0) {
+        if (zero == diff.length)
             break;
-        ++zeroes;
+        ++zero;
     }
-    if (zeroes == diff.length) {
+    if (zero == diff.length) {
         diff.arr = (int *)realloc(diff.arr, sizeof(int));
         diff.arr[0] = 0;
         diff.length = 1;
     }
-    else if (zeroes != 0) {
-        memcpy(diff.arr, diff.arr + zeroes, (diff.length - zeroes) * sizeof(int));
-        diff.length -= zeroes;
+    else if (zero != 0) {
+        memcpy(diff.arr, diff.arr + zero, (diff.length - zero) * sizeof(int));
+        diff.length -= zero;
     }
     return diff;
 }
@@ -236,13 +239,13 @@ bool getAnswerSign(BigInt content, BigInt sub, int maxLen) {
         return false;
     else {  // equal length
         for (int i = 0; i < maxLen; i++) {
-            int contentDigit = content.arr[i];
-            int subDigit = sub.arr[i];
-            if (contentDigit > subDigit)
+            int digit1 = content.arr[i];
+            int digit2 = sub.arr[i];
+            if (digit1 > digit2)
                 return true;
-            else if (contentDigit < subDigit)
+            else if (digit1 < digit2)
                 return false;
-            else if (contentDigit == subDigit && i != maxLen - 1)
+            else if (digit1 == digit2 && i != maxLen - 1)
                 continue;
             else // equal numbers
                 return false;
@@ -251,7 +254,7 @@ bool getAnswerSign(BigInt content, BigInt sub, int maxLen) {
     return false;
 }
 
-BigInt mulLongInt(BigInt num1, BigInt num2) {
+BigInt mulBigInt(BigInt num1, BigInt num2) {
     int sign1 = (num1.arr[0] >= 0) ? 1 : -1;
     int sign2 = (num2.arr[0] >= 0) ? 1 : -1;
     int sign = sign1 * sign2;
@@ -272,21 +275,21 @@ BigInt mulLongInt(BigInt num1, BigInt num2) {
         result.arr[i] += carry;
     }
 
-    // Remove leading zeroes if there are any and reallocate the array
-    int zeroes = 0;
-    while (result.arr[zeroes] == 0) {
-        if (zeroes == result.length)
+    // Remove leading zero if there are any and reallocate the array
+    int zero = 0;
+    while (result.arr[zero] == 0) {
+        if (zero == result.length)
             break;
-        ++zeroes;
+        ++zero;
     }
-    if (zeroes == result.length) {
+    if (zero == result.length) {
         result.arr = (int *)realloc(result.arr, sizeof(int));
         result.arr[0] = 0;
         result.length = 1;
     }
-    else if (zeroes != 0) {
-        memcpy(result.arr, result.arr + zeroes, (result.length - zeroes) * sizeof(int));
-        result.length -= zeroes;
+    else if (zero != 0) {
+        memcpy(result.arr, result.arr + zero, (result.length - zero) * sizeof(int));
+        result.length -= zero;
     }
 
     result.arr[0] *=  sign;
@@ -296,56 +299,56 @@ BigInt mulLongInt(BigInt num1, BigInt num2) {
     return result;
 }
 
-BigInt divLongInt(BigInt dividend, BigInt divisor) {
-    int sign1 = (dividend.arr[0] >= 0) ? 1 : -1;
+BigInt divBigInt(BigInt number, BigInt divisor) {
+    int sign1 = (number.arr[0] >= 0) ? 1 : -1;
     int sign2 = (divisor.arr[0] >= 0) ? 1 : -1;
     int sign = sign1 * sign2;
-    dividend.arr[0] *= sign1;
+    number.arr[0] *= sign1;
     divisor.arr[0] *= sign2;
 
-    BigInt quotient, remainder;
-    quotient.arr = (int*)calloc(dividend.length, sizeof(int));
-    remainder.arr = (int*)calloc(dividend.length, sizeof(int));
-    quotient.length = 0;
+    BigInt answer, remainder;
+    answer.arr = (int*)calloc(number.length, sizeof(int));
+    remainder.arr = (int*)calloc(number.length, sizeof(int));
+    answer.length = 0;
     remainder.length = 0;
 
-    for (int i = 0; i < dividend.length; ++i) {
+    for (int i = 0; i < number.length; ++i) {
         ++remainder.length;
-        remainder.arr[remainder.length - 1] = dividend.arr[i];
+        remainder.arr[remainder.length - 1] = number.arr[i];
         int q = 0;
-        while (compareLongInts(remainder, divisor) >= 0) {
-            remainder = subLongInt(remainder, divisor);
+        while (compareBigInts(remainder, divisor) >= 0) {
+            remainder = subBigInt(remainder, divisor);
             ++q;
         }
-        ++quotient.length;
-        quotient.arr[quotient.length - 1] = q;
+        ++answer.length;
+        answer.arr[answer.length - 1] = q;
     }
 
-    // Remove leading zeroes from quotient if there are any
-    int zeroes = 0;
-    while (quotient.arr[zeroes] == 0) {
-        if (zeroes == quotient.length)
+    // Remove leading zero from answer if there are any
+    int zero = 0;
+    while (answer.arr[zero] == 0) {
+        if (zero == answer.length)
             break;
-        ++zeroes;
+        ++zero;
     }
-    if (zeroes == quotient.length) {
-        quotient.arr = (int*)realloc(quotient.arr, sizeof(int));
-        quotient.arr[0] = 0;
-        quotient.length = 1;
+    if (zero == answer.length) {
+        answer.arr = (int*)realloc(answer.arr, sizeof(int));
+        answer.arr[0] = 0;
+        answer.length = 1;
     }
-    else if (zeroes != 0) {
-        memcpy(quotient.arr, quotient.arr + zeroes, (quotient.length - zeroes) * sizeof(int));
-        quotient.length -= zeroes;
+    else if (zero != 0) {
+        memcpy(answer.arr, answer.arr + zero, (answer.length - zero) * sizeof(int));
+        answer.length -= zero;
     }
 
-    quotient.arr[0] *= sign;
-    dividend.arr[0] *= sign1;
+    answer.arr[0] *= sign;
+    number.arr[0] *= sign1;
     divisor.arr[0] *= sign2;
 
-    return quotient;
+    return answer;
 }
 
-int compareLongInts(BigInt num1, BigInt num2) {
+int compareBigInts(BigInt num1, BigInt num2) {
     // Make copies of num1 and num2 to avoid modifying the original numbers
     BigInt copy1 = num1;
     BigInt copy2 = num2;
