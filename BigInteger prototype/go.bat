@@ -9,4 +9,4 @@ goto :toliau
 make
 
 :toliau
-test.exe > test.txt
+test.exe > make
